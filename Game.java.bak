@@ -7,13 +7,16 @@ public class Game
 	int col;
 	LinkedList<int[]> snake=new LinkedList<>();
 	int score=0;
+	int appleRow=0;
+	int appleCol=0;
+	int count=-1;
+	long start;
 	public void entry()
 	{
 		
 		clearScreen();
-		int count=0;
-		int appleRow=0;
-		int appleCol=0;
+		
+		
 		row=input.nextInt();
 		col=input.nextInt();
 		board=new String[row][col];
@@ -27,7 +30,7 @@ public class Game
 			board[i][0]=board[i][col-1]="|";   
 	    //snakeInitialize
 		//----------------------------
-		for(int i=0;i<9;i++){
+		for(int i=0;i<5;i++){
 			if(i==0)
 			{
 				board[row/2][col/2]="<";
@@ -39,26 +42,22 @@ public class Game
 			}
 		}
 		//------------------------------
+		update();
 		display();
-		while(true&&count<=5)
+		
+		start =System.currentTimeMillis();
+		while(true&&count<=10)
 		{
-			
-			 boolean flag=false;
+			update();
+			clearScreen();
+		    display();
+			boolean flag=false;
 			String str=input.next();
 			input.nextLine();
 			for(int i=0;i<str.length();i++)
 			{
-				while(true&&board[appleRow][appleCol].charAt(0)!='@')
-			   {
-				 appleRow=(int)System.currentTimeMillis()%row;
-	             appleCol=(int)System.currentTimeMillis()%col;
-				if(board[appleRow][appleCol].charAt(0)==' ')
-				{
-					board[appleRow][appleCol]="@";
-					count++;
-					break;
-				}
-			 }
+				update();
+				
 			switch(str.charAt(i))
 			{
 				case'a':
@@ -84,17 +83,34 @@ public class Game
 				case 'e':
 				  return;	  
 			}
-			
+			if(count==10)
+				return;
 			if(flag==false)
 			{
-				clearScreen();
+			   clearScreen();
 			   System.out.println("\t\t\tYou Lost");
 			   return ;
 			}
 		}
 		}
+		clearScreen();
+	    display();
 		
 		
+	}
+	public void update()
+	{
+		while(true&&board[appleRow][appleCol].charAt(0)!='@')
+			   {
+				 appleRow=(int)System.currentTimeMillis()%row;
+	             appleCol=(int)System.currentTimeMillis()%col;
+				if(board[appleRow][appleCol].charAt(0)==' ')
+				{
+					board[appleRow][appleCol]="@";
+					count++;
+					break;
+				}
+			 }
 	}
 	public boolean left()
 	{
@@ -241,7 +257,7 @@ public class Game
 	}
 	public void display()
 	{
-		System.out.print("\n\t\tScore : "+score+"\n");
+		System.out.println("\n\t\tScore : "+score+"  Total Time : "+(System.currentTimeMillis()-start)%1000);
 		for(int i=0;i<row;i++){
 			System.out.print("\t");
 			for(int j=0;j<col;j++)
@@ -252,7 +268,7 @@ public class Game
 	 public void clearScreen()
    {
 	   try{
-		   Thread.sleep(69);
+		   Thread.sleep(50);
 	      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 	   }
 	   catch(Exception e)
